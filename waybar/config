@@ -19,14 +19,14 @@
         //"custom/rofi",
         "hyprland/workspaces",
         //"hyprland/submap",
-        "temperature",
+        //"temperature",
         //"idle_inhibitor",
         //"mpd"
         "custom/spotify"
     ],
     "modules-center": [
         //"hyprland/window"
-        "clock#date",
+        "clock#3",
         "custom/weather"
         //"custom/gammastep"
     ],
@@ -35,7 +35,7 @@
         "custom/storage",
         "memory",
         "cpu",
-	"network",
+	//"network",
         "battery",
         //"pulseaudio",
         "wireplumber",
