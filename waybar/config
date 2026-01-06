@@ -35,12 +35,12 @@
         "custom/storage",
         "memory",
         "cpu",
-	//"network",
+				"network",
         "battery",
-        //"pulseaudio",
-        "wireplumber",
+        "pulseaudio",
+        //"wireplumber",
         "custom/screenshot_t",
-        "tray",
+        //"tray",
         "custom/power",
     ],
 
@@ -116,7 +116,7 @@
             "critical": 15
         },
         "format": "{icon} {capacity}%",
-        "format-charging": " {capacity}%",
+        "format-charging": "󰢜  {capacity}%",
         "format-plugged": " {capacity}%",
         "format-icons": [
             "",

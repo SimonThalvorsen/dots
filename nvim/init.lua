@@ -6,6 +6,8 @@ vim.o.number = true
 vim.o.relativenumber = true
 vim.o.termguicolors = true
 vim.o.wrap = false
+-- vim.o.colorcolumn = 72
+vim.o.textwidth = 72
 vim.o.swapfile = false
 vim.o.ignorecase = true
 vim.o.smartindent = true
@@ -152,6 +154,7 @@ require("lazy").setup({
 			map("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Quick fix" })
 			map("n", "<leader>ld", vim.lsp.buf.definition, { desc = "Goto definition" })
 			map("n", "<leader>lu", vim.lsp.buf.references, { desc = "Goto usages" })
+			map("n", "<leader>lq", vim.lsp.buf.hover, { desc = "Hover error" })
 			map("n", "<leader>lS", "<cmd>vsplit | :Telescope lsp_document_symbols<CR>", { desc = "LSP symbols outline" })
 		end
 	},
