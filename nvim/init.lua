@@ -208,15 +208,15 @@ local map = vim.keymap.set
 
 -- Telescope
 local tb = require("telescope.builtin")
-map("n", "<leader>ff", tb.find_files, {desc = "find files"})
-map("n", "<leader>fw", tb.live_grep, {desc = "find words"})
-map("n", "<leader>fh", tb.help_tags, {desc = "find help"})
+map("n", "<leader>ff", tb.find_files, { desc = "find files" })
+map("n", "<leader>fw", tb.live_grep, { desc = "find words" })
+map("n", "<leader>fh", tb.help_tags, { desc = "find help" })
 
 -- Oil
 map("n", "<leader>e", "<cmd>Oil<CR>")
 
 -- Lazygit
-map("n", "<leader>gg", "<cmd>LazyGit<CR>", {desc = "Lazygit"})
+map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 
 -- QOL
 map("n", "<C-d>", "<C-d>zz")
@@ -224,10 +224,10 @@ map("n", "<C-u>", "<C-u>zz")
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Write file" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
 
--- BUFFER 
-map("n", "<leader>bb", tb.buffers, {desc = "find buffers"})
-map("n", "<leader>b\\", "<cmd>split<CR>", {desc = "New horisontal buffer"})
-map("n", "<leader>b|", "<cmd>vsplit<CR>", {desc = "New vertical buffer"})
+-- BUFFER
+map("n", "<leader>bb", tb.buffers, { desc = "find buffers" })
+map("n", "<leader>b\\", "<cmd>split<CR>", { desc = "New horisontal buffer" })
+map("n", "<leader>b|", "<cmd>vsplit<CR>", { desc = "New vertical buffer" })
 map("n", "<C-h>", "<C-w>h")
 map("n", "<C-j>", "<C-w>j")
 map("n", "<C-k>", "<C-w>k")
