@@ -224,6 +224,19 @@ require("lazy").setup({
     },
 
     -----------------------------------------------------------
+    -- GIT BLAME
+    -----------------------------------------------------------
+    {
+        "f-person/git-blame.nvim",
+        event = "VeryLazy",
+        opts = {
+            enabled = false, -- Start with blame disabled
+            message_template = " <author> • <date> • <summary>",
+            date_format = "%r",
+        },
+    },
+
+    -----------------------------------------------------------
     -- MARKS
     -----------------------------------------------------------
     { "chentoast/marks.nvim",         config = true },
@@ -253,6 +266,9 @@ map("n", "<leader>e", "<cmd>Oil<CR>")
 
 -- Lazygit
 map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
+
+-- Git Blame
+map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { desc = "Toggle git blame" })
 
 -- QOL
 map("n", "<C-d>", "<C-d>zz")
