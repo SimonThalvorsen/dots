@@ -45,11 +45,24 @@ require("lazy").setup({
                 lua = { "stylua" },
                 rust = { "rustfmt" },
                 cpp = { "clang-format" },
-                -- c = { "clang-format" },
+                c = { "clang-format" },
                 python = { "black" },
                 json = { "prettier" },
                 -- Use a sub-list to run only the first available formatter
                 javascript = { "prettierd", "prettier", stop_after_first = true },
+            },
+            formatters = {
+                ["clang-format"] = {
+                    -- Use .clang-format file from project root if it exists
+                    prepend_args = function(self, ctx)
+                        -- Search for .clang-format in current directory and parent directories
+                        local clang_format = vim.fn.findfile(".clang-format", ".;")
+                        if clang_format ~= "" then
+                            return { "--style=file:" .. vim.fn.fnamemodify(clang_format, ":p") }
+                        end
+                        return {}
+                    end,
+                },
             },
             -- format_on_save = {
             -- 	timeout_ms = 1000,
@@ -184,6 +197,13 @@ require("lazy").setup({
                     timeout_ms = 1000,   -- Timeout in milliseconds
                 })
             end, { desc = "Format current file with conform" })
+            map("v", "<leader>lf", function()
+                require("conform").format({
+                    lsp_fallback = true,
+                    async = false,
+                    timeout_ms = 1000,
+                })
+            end, { desc = "Format selected text with conform" })
             map("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Quick fix" })
             map("n", "<leader>ld", vim.lsp.buf.definition, { desc = "Goto definition" })
             map("n", "<leader>lu", vim.lsp.buf.references, { desc = "Goto usages" })
