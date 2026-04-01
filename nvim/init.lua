@@ -5,9 +5,10 @@ vim.g.mapleader = " "
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.termguicolors = true
-vim.o.wrap = false
--- vim.o.colorcolumn = 72
-vim.o.textwidth = 72
+vim.o.wrap = true
+-- vim.o.colorcolumn = "80"
+vim.api.nvim_set_hl(0, "VirtColumn", { fg = "#3a3a4a", bg = "None" })
+-- vim.o.textwidth = 72
 vim.o.swapfile = false
 vim.o.ignorecase = true
 vim.o.smartindent = true
@@ -46,7 +47,7 @@ require("lazy").setup({
                 rust = { "rustfmt" },
                 cpp = { "clang-format" },
                 c = { "clang-format" },
-                python = { "black" },
+                python = { "black", "pyright" },
                 json = { "prettier" },
                 -- Use a sub-list to run only the first available formatter
                 javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -72,6 +73,18 @@ require("lazy").setup({
     },
 
     -----------------------------------------------------------
+    -- THIN COLORCOLUMN
+    -----------------------------------------------------------
+    {
+        "lukas-reineke/virt-column.nvim",
+        opts = {
+            char = "│",
+            virtcolumn = "80",
+            highlight = "VirtColumn",
+        },
+    },
+
+    -----------------------------------------------------------
     -- UI + THEME
     -----------------------------------------------------------
     {
@@ -82,6 +95,30 @@ require("lazy").setup({
             require("vague").setup({ transparent = true })
             vim.cmd("colorscheme vague")
         end
+    },
+
+    -----------------------------------------------------------
+    -- STATUSLINE
+    -----------------------------------------------------------
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = {
+            options = {
+                theme = "auto",
+                component_separators = { left = "", right = "" },
+                section_separators = { left = "", right = "" },
+                globalstatus = true,
+            },
+            sections = {
+                lualine_a = { "mode" },
+                lualine_b = { "branch", "diff", "diagnostics" },
+                lualine_c = { { "filename", path = 1 } },  -- relative path
+                lualine_x = { "filetype" },
+                lualine_y = { "progress" },
+                lualine_z = { "location" },
+            },
+        },
     },
 
     -----------------------------------------------------------
@@ -207,8 +244,10 @@ require("lazy").setup({
             map("n", "<leader>la", vim.lsp.buf.code_action, { desc = "Quick fix" })
             map("n", "<leader>ld", vim.lsp.buf.definition, { desc = "Goto definition" })
             map("n", "<leader>lu", vim.lsp.buf.references, { desc = "Goto usages" })
-            map("n", "<leader>lq", vim.lsp.buf.hover, { desc = "Hover error" })
-            map("n", "<leader>lS", "<cmd>vsplit | :Telescope lsp_document_symbols<CR>", { desc = "LSP symbols outline" })
+            map("n", "<leader>lq", vim.lsp.buf.hover, { desc = "Hover docstring" })
+            map("n", "<leader>li", vim.diagnostic.open_float, { desc = "Hover error" })
+            map("n", "<leader>lS", ":Telescope lsp_document_symbols<CR>", { desc = "LSP symbols outline" })
+            map("n", "<leader>lr", vim.lsp.buf.rename, { desc = "Rename variable" })
         end
     },
 
@@ -265,6 +304,18 @@ require("lazy").setup({
     -- TYPST PREVIEW
     -----------------------------------------------------------
     { "chomosuke/typst-preview.nvim", ft = "typst" },
+
+    -----------------------------------------------------------
+    -- CFENGINE 3 SYNTAX
+    -----------------------------------------------------------
+    {
+        "neilhwatson/vim_cf3",
+        config = function()
+            -- Disable all features except syntax highlighting
+            vim.g.loaded_cf3_plugin = 1
+            vim.g.cf3_fold_enable = 0
+        end
+    },
 })
 
 -----------------------------------------------------------
@@ -273,7 +324,7 @@ require("lazy").setup({
 local map = vim.keymap.set
 
 -- Conform
-vim.api.nvim_set_keymap('n', '<Leader>uf', '<cmd>FormatToggle<CR>', { desc = 'Toggle autoformat on save (Global)' })
+map('n', '<Leader>uf', '<cmd>FormatToggle<CR>', { desc = 'Toggle autoformat on save (Global)' })
 
 -- Telescope
 local tb = require("telescope.builtin")
