@@ -79,7 +79,7 @@ require("lazy").setup({
         "lukas-reineke/virt-column.nvim",
         opts = {
             char = "│",
-            virtcolumn = "80",
+            virtcolumn = "72, 80, 100",
             highlight = "VirtColumn",
         },
     },
@@ -113,7 +113,7 @@ require("lazy").setup({
             sections = {
                 lualine_a = { "mode" },
                 lualine_b = { "branch", "diff", "diagnostics" },
-                lualine_c = { { "filename", path = 1 } },  -- relative path
+                lualine_c = { { "filename", path = 1 } }, -- relative path
                 lualine_x = { "filetype" },
                 lualine_y = { "progress" },
                 lualine_z = { "location" },
@@ -129,7 +129,11 @@ require("lazy").setup({
         opts = {
             float = { border = "rounded", max_width = 0.7, max_height = 0.6 },
             lsp_file_methods = { enabled = true },
-        }
+            view_options = {
+                -- Show files and directories that start with "."
+                show_hidden = true,
+            }
+        },
     },
 
     -----------------------------------------------------------
