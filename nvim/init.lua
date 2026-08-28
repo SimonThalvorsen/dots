@@ -14,9 +14,21 @@ vim.o.ignorecase = true
 vim.o.smartindent = true
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
-vim.o.signcolumn = "yes"
+vim.o.signcolumn = "yes:1" -- diagnostics/marks slot; git gets its own fixed slot via statuscolumn below
 vim.o.clipboard = "unnamedplus"
 vim.o.expandtab = true
+
+-----------------------------------------------------------
+-- STATUSCOLUMN: fixed slots so signs don't shift the line
+-- number around depending on what's present on a line.
+-- layout: [git (always col 1)] [diagnostics (always col 2)] [number]
+-----------------------------------------------------------
+function _G.Statuscolumn()
+    local ok, gitsigns = pcall(require, "gitsigns")
+    local git_col = (ok and gitsigns.statuscolumn()) or "  "
+    return git_col .. "%s%=%{v:relnum==0?v:lnum:v:relnum} "
+end
+vim.o.statuscolumn = "%!v:lua.Statuscolumn()"
 
 -----------------------------------------------------------
 -- LAZY (PLUGIN MANAGER)
@@ -51,6 +63,9 @@ require("lazy").setup({
                 json = { "prettier" },
                 -- Use a sub-list to run only the first available formatter
                 javascript = { "prettierd", "prettier", stop_after_first = true },
+                -- *.cf files get ft=cf3 from the vim_cf3 plugin
+                cf3 = { "cfengine-format" },
+                cfengine = { "cfengine-format" },
             },
             formatters = {
                 ["clang-format"] = {
@@ -63,6 +78,13 @@ require("lazy").setup({
                         end
                         return {}
                     end,
+                },
+                ["cfengine-format"] = {
+                    command = "cfengine",
+                    args = { "format", "$FILENAME" },
+                    -- `cfengine format` rewrites the file on disk rather than
+                    -- printing to stdout, so format via a temp file
+                    stdin = false,
                 },
             },
             -- format_on_save = {
@@ -129,10 +151,39 @@ require("lazy").setup({
         opts = {
             float = { border = "rounded", max_width = 0.7, max_height = 0.6 },
             lsp_file_methods = { enabled = true },
+            win_options = {
+                -- oil-git-status needs two sign-column slots (index + worktree);
+                -- opt out of the global custom statuscolumn so it renders normally
+                signcolumn = "yes:2",
+                statuscolumn = "",
+            },
             view_options = {
                 -- Show files and directories that start with "."
                 show_hidden = true,
             }
+        },
+    },
+    {
+        "refractalize/oil-git-status.nvim",
+        dependencies = { "stevearc/oil.nvim" },
+        config = true,
+    },
+
+    -----------------------------------------------------------
+    -- GITSIGNS (colored added/changed/removed markers)
+    -----------------------------------------------------------
+    {
+        "lewis6991/gitsigns.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        opts = {
+            signs = {
+                add          = { text = "▐" },
+                change       = { text = "▐" },
+                delete       = { text = "_" },
+                topdelete    = { text = "‾" },
+                changedelete = { text = "▐" },
+                untracked    = { text = "▐" },
+            },
         },
     },
 
@@ -344,6 +395,13 @@ map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 
 -- Git Blame
 map("n", "<leader>gb", "<cmd>GitBlameToggle<CR>", { desc = "Toggle git blame" })
+map("n", "<leader>gs", function()
+    if vim.g.gitblame_enabled then
+        vim.cmd("GitBlameCopySHA")
+    else
+        vim.notify("Git blame is off — toggle it with <leader>gb first", vim.log.levels.WARN)
+    end
+end, { desc = "Copy blame commit SHA (git blame mode only)" })
 
 -- QOL
 map("n", "<C-d>", "<C-d>zz")
