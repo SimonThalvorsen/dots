@@ -31,23 +31,32 @@
         //"custom/gammastep"
     ],
     "modules-right": [
-        "backlight",
-        "custom/storage",
+        // "backlight",
+        // "custom/storage",
+        "custom/vpn",
         "memory",
-        "cpu",
-				"network",
+        // "cpu",
+		"network",
         "battery",
-        "pulseaudio",
+        "pulseaudio"
         //"wireplumber",
-        "custom/screenshot_t",
+        // "custom/screenshot_t",
         //"tray",
-        "custom/power",
+        // "custom/power"
     ],
 
 
     // -------------------------------------------------------------------------
     // Modules
     // -------------------------------------------------------------------------
+    "custom/vpn": {
+       "interval": 3,
+       "format": "{}",
+       "exec": "ip add show | grep -qF tun0 && echo 🔒 Connected || echo 🔓 Disconnected",
+       "max-length": "100",
+       "on-click": "openvpn3 session-start --config ~/.vpn/profile-userlocked.ovpn",
+       "on-click-right": "openvpn3 session-manage --disconnect --config ~/.vpn/profile-userlocked.ovpn"
+    },
 
     "custom/sp1": {
         "format": " | ",
@@ -127,7 +136,7 @@
         ]
     },
     "network": {
-        "format-wifi": " {essid}", //({signalStrength}%)",
+        "format-wifi": " {essid}",
         "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
         "format-linked": "{ifname} (No IP) ",
         "format": "",
@@ -153,7 +162,6 @@
         "format": "{icon} {percent}%",
         "format-alt": "{percent}% {icon}",
         "format-alt-click": "click-right",
-        //"format-icons": ["", ""],
         "format-icons": ["", ""],
         "on-scroll-down": "brightnessctl s 5%-",
         "on-scroll-up": "brightnessctl s +5%"
