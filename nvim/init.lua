@@ -383,8 +383,62 @@ map('n', '<Leader>uf', '<cmd>FormatToggle<CR>', { desc = 'Toggle autoformat on s
 
 -- Telescope
 local tb = require("telescope.builtin")
-map("n", "<leader>ff", tb.find_files, { desc = "find files" })
-map("n", "<leader>fw", tb.live_grep, { desc = "find words" })
+
+local function find_files_toggle_hidden()
+    local hidden = false
+    local function open(default_text)
+        tb.find_files({
+            hidden = hidden,
+            prompt_title = hidden and "Find Files 👁 hidden" or "Find Files",
+            default_text = default_text,
+            attach_mappings = function(prompt_bufnr, map_key)
+                local actions = require("telescope.actions")
+                local action_state = require("telescope.actions.state")
+                local function toggle()
+                    hidden = not hidden
+                    local prompt = action_state.get_current_line()
+                    actions.close(prompt_bufnr)
+                    vim.schedule(function() open(prompt) end)
+                end
+                map_key("i", "<C-h>", toggle)
+                map_key("n", "<C-h>", toggle)
+                return true
+            end,
+        })
+    end
+    open()
+end
+
+map("n", "<leader>ff", find_files_toggle_hidden, { desc = "find files (<C-h> toggle hidden)" })
+
+local function live_grep_toggle_hidden()
+    local hidden = false
+    local function open(default_text)
+        tb.live_grep({
+            additional_args = function()
+                return hidden and { "--hidden" } or {}
+            end,
+            prompt_title = hidden and "Live Grep 👁 hidden" or "Live Grep",
+            default_text = default_text,
+            attach_mappings = function(prompt_bufnr, map_key)
+                local actions = require("telescope.actions")
+                local action_state = require("telescope.actions.state")
+                local function toggle()
+                    hidden = not hidden
+                    local prompt = action_state.get_current_line()
+                    actions.close(prompt_bufnr)
+                    vim.schedule(function() open(prompt) end)
+                end
+                map_key("i", "<C-h>", toggle)
+                map_key("n", "<C-h>", toggle)
+                return true
+            end,
+        })
+    end
+    open()
+end
+
+map("n", "<leader>fw", live_grep_toggle_hidden, { desc = "find words (<C-h> toggle hidden)" })
 map("n", "<leader>fh", tb.help_tags, { desc = "find help" })
 
 -- Oil
