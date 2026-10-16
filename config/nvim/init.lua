@@ -387,13 +387,40 @@ local tb = require("telescope.builtin")
 local function find_files_toggle_hidden()
     local hidden = false
     local function open(default_text)
+        local opts = {}
+        local file_entry = require("telescope.make_entry").gen_from_file(opts)
         tb.find_files({
+            -- Directories get oil's folder icon instead of devicons' generic file icon
+            entry_maker = function(line)
+                local entry = file_entry(line)
+                if entry and line:sub(-1) == "/" then
+                    entry.display = function(e)
+                        local icon = "\u{f07b}" -- nf-fa-folder, same as oil
+                        local path = require("telescope.utils").transform_path(opts, e.value)
+                        return icon .. " " .. path, { { { 0, #icon }, "OilDirIcon" } }
+                    end
+                end
+                return entry
+            end,
             hidden = hidden,
+            -- Directories too (fd marks them with a trailing "/"); telescope adds --hidden
+            find_command = { "fd", "--type", "f", "--type", "d", "--color", "never", "--exclude", ".git" },
             prompt_title = hidden and "Find Files 👁 hidden" or "Find Files",
             default_text = default_text,
             attach_mappings = function(prompt_bufnr, map_key)
                 local actions = require("telescope.actions")
                 local action_state = require("telescope.actions.state")
+                local function selected_dir()
+                    local entry = action_state.get_selected_entry()
+                    local path = entry and (entry.path or entry[1])
+                    return path and vim.fn.isdirectory(path) == 1 and path or nil
+                end
+                -- A directory opens in oil (which also moves the cwd there); files as usual
+                actions.select_default:replace_if(function() return selected_dir() ~= nil end, function()
+                    local dir = selected_dir()
+                    actions.close(prompt_bufnr)
+                    require("oil").open(dir)
+                end)
                 local function toggle()
                     hidden = not hidden
                     local prompt = action_state.get_current_line()
@@ -443,6 +470,17 @@ map("n", "<leader>fh", tb.help_tags, { desc = "find help" })
 
 -- Oil
 map("n", "<leader>e", "<cmd>Oil<CR>")
+
+-- Make nvim's cwd follow oil like a shell, so telescope searches from the dir you're browsing
+vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = "oil://*",
+    callback = function()
+        local dir = require("oil").get_current_dir()
+        if dir and vim.fn.isdirectory(dir) == 1 then
+            vim.fn.chdir(dir)
+        end
+    end,
+})
 
 -- Lazygit
 map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
