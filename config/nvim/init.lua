@@ -402,10 +402,12 @@ local function find_files_toggle_hidden()
                 end
                 return entry
             end,
+            -- <C-h> also includes gitignored entries (telescope adds --hidden --no-ignore)
             hidden = hidden,
-            -- Directories too (fd marks them with a trailing "/"); telescope adds --hidden
+            no_ignore = hidden,
+            -- Directories too (fd marks them with a trailing "/")
             find_command = { "fd", "--type", "f", "--type", "d", "--color", "never", "--exclude", ".git" },
-            prompt_title = hidden and "Find Files 👁 hidden" or "Find Files",
+            prompt_title = hidden and "Find Files 👁 hidden + ignored" or "Find Files",
             default_text = default_text,
             attach_mappings = function(prompt_bufnr, map_key)
                 local actions = require("telescope.actions")
@@ -436,7 +438,7 @@ local function find_files_toggle_hidden()
     open()
 end
 
-map("n", "<leader>ff", find_files_toggle_hidden, { desc = "find files (<C-h> toggle hidden)" })
+map("n", "<leader>ff", find_files_toggle_hidden, { desc = "find files (<C-h> toggle hidden + ignored)" })
 
 local function live_grep_toggle_hidden()
     local hidden = false
