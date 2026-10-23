@@ -502,6 +502,10 @@ map("n", "<C-d>", "<C-d>zz")
 map("n", "<C-u>", "<C-u>zz")
 map("n", "<leader>w", "<cmd>w<CR>", { desc = "Write file" })
 map("n", "<leader>q", "<cmd>q<CR>", { desc = "Quit window" })
+map("n", "<leader>tw", function()
+    vim.wo.wrap = not vim.wo.wrap
+    vim.notify("Line wrap " .. (vim.wo.wrap and "on" or "off"))
+end, { desc = "Toggle line wrap" })
 
 -- BUFFER
 map("n", "<leader>bb", tb.buffers, { desc = "find buffers" })
