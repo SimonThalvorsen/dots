@@ -1,0 +1,14 @@
+-- ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+-- ┃                 CachyOS Hyprland Configuration              ┃
+-- ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+-- Modules live in ~/.config/hypr/config/*.lua
+require("config.animations")
+require("config.autostart")
+require("config.decorations")
+require("config.environment")
+require("config.input")
+require("config.keybinds")
+require("config.monitor")
+require("config.variables")
+require("config.windowrules")

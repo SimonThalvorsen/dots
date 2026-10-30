@@ -17,7 +17,7 @@
 
     "modules-left": [
         //"custom/rofi",
-        "hyprland/workspaces",
+        "ext/workspaces",
         //"hyprland/submap",
         //"temperature",
         //"idle_inhibitor",
@@ -306,7 +306,7 @@
         "exec": "$HOME/.config/waybar/get_kbdlayout.sh"
     },*/
 
-    "hyprland/workspaces": {
+    "ext/workspaces": {
         "all-outputs": true,
         "format": "{name}",
         "format-icons": {
@@ -321,9 +321,10 @@
             "9": "九",
             "10": "十",
         },
-        "on-scroll-up": "hyprctl dispatch workspace e+1 1>/dev/null",
-        "on-scroll-down": "hyprctl dispatch workspace e-1 1>/dev/null",
-        "sort-by-number": true,
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e+1\" })' 1>/dev/null",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"e-1\" })' 1>/dev/null",
+        "on-click": "activate",
+        "sort-by-name": true,
         "active-only": false,
     },
 
